@@ -9,12 +9,7 @@ import { mount, shallow } from 'enzyme';
 import Calculator, { getSum } from '../components/calculator';
 
 describe('Calculator component', () => {
-  it('should render snapshot', () => {
-    const component = renderer.create(<Calculator />);
-
-    const tree = component.toJSON();
-    expect(tree).toMatchSnapshot();
-  });
+  // SECOND: should render snapshot was removed because it dependend on snapshot comparisons which is an anti-pattern in RTL
 
   it('should return the correct sum', () => {
     const sum = getSum(3, 5);
