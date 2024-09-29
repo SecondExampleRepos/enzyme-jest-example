@@ -3,18 +3,13 @@
  */
 
 import React from 'react';
-import renderer from 'react-test-renderer';
-import { mount, shallow } from 'enzyme';
+import '@testing-library/jest-dom';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 import Calculator, { getSum } from '../components/calculator';
 
 describe('Calculator component', () => {
-  it('should render snapshot', () => {
-    const component = renderer.create(<Calculator />);
-
-    const tree = component.toJSON();
-    expect(tree).toMatchSnapshot();
-  });
+  // SECOND: "should render snapshot" was removed because it tests snapshot comparisons which is an anti-pattern in RTL
 
   it('should return the correct sum', () => {
     const sum = getSum(3, 5);
@@ -22,25 +17,33 @@ describe('Calculator component', () => {
   });
 
   it('should render required form elements', () => {
-    const calculator = shallow(<Calculator />);
+    render(<Calculator />);
 
-    const form = calculator.find('form');
-    expect(form.length).toBe(1);
-    expect(form.find('input').length).toBe(2);
-    expect(form.find('button').length).toBe(1);
-    expect(form.find('p.result').length).toBe(1);
+    const form = screen.getByRole('form');
+    expect(form).toBeInTheDocument();
+
+    const inputs = screen.getAllByRole('spinbutton');
+    expect(inputs.length).toBe(2);
+
+    const button = screen.getByRole('button', { name: /add/i });
+    expect(button).toBeInTheDocument();
+
+    // SECOND: Unable to determine the best way to select this element using .getByRole().  I made my best guess.
+    const result = screen.getByText('', { selector: 'p.result' });
+    expect(result).toBeInTheDocument();
   });
 
   it('should display the result on add', () => {
-    const calculator = mount(<Calculator />);
+    render(<Calculator />);
 
-    const form = calculator.find('form');
+    const inputs = screen.getAllByRole('spinbutton');
+    fireEvent.change(inputs[0], { target: { value: 3 } });
+    fireEvent.change(inputs[1], { target: { value: 5 } });
 
-    form.childAt(0).instance().value = 3;
-    form.childAt(1).instance().value = 5;
-    form.find('button').simulate('click');
+    const button = screen.getByRole('button', { name: /add/i });
+    fireEvent.click(button);
 
-    const result = calculator.find('.result');
-    expect(result.text()).toEqual('8');
+    const result = screen.getByText('8');
+    expect(result).toBeInTheDocument();
   });
 });
