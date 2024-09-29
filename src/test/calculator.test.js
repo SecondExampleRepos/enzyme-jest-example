@@ -19,9 +19,11 @@ describe('Calculator component', () => {
   it('should render required form elements', () => {
     render(<Calculator />);
 
+    // SECOND: Please add a role="form" attribute to this element in the React component so that it can be selected.
     const form = screen.getByRole('form');
     expect(form).toBeInTheDocument();
     expect(screen.getAllByRole('spinbutton').length).toBe(2);
+    // SECOND: Please add a role="button" attribute to this element in the React component so that it can be selected.
     expect(screen.getByRole('button', { name: /add/i })).toBeInTheDocument();
   });
 
@@ -30,6 +32,7 @@ describe('Calculator component', () => {
 
     const inputOne = screen.getAllByRole('spinbutton')[0];
     const inputTwo = screen.getAllByRole('spinbutton')[1];
+    // SECOND: Please add a role="button" attribute to this element in the React component so that it can be selected.
     const button = screen.getByRole('button', { name: /add/i });
 
     fireEvent.change(inputOne, { target: { value: 3 } });
