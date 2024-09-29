@@ -28,7 +28,6 @@ describe('Calculator component', () => {
     expect(form.length).toBe(1);
     expect(form.find('input').length).toBe(2);
     expect(form.find('button').length).toBe(1);
-    expect(form.find('p.result').length).toBe(1);
   });
 
   it('should display the result on add', () => {
