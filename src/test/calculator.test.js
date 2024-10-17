@@ -3,18 +3,13 @@
  */
 
 import React from 'react';
-import renderer from 'react-test-renderer';
-import { mount, shallow } from 'enzyme';
+import '@testing-library/jest-dom';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 import Calculator, { getSum } from '../components/calculator';
 
 describe('Calculator component', () => {
-  it('should render snapshot', () => {
-    const component = renderer.create(<Calculator />);
-
-    const tree = component.toJSON();
-    expect(tree).toMatchSnapshot();
-  });
+  // SECOND: "Calculator component should render snapshot" was removed because it tests snapshot comparisons which is an anti-pattern in RTL
 
   it('should return the correct sum', () => {
     const sum = getSum(3, 5);
@@ -22,24 +17,26 @@ describe('Calculator component', () => {
   });
 
   it('should render required form elements', () => {
-    const calculator = shallow(<Calculator />);
+    render(<Calculator />);
 
-    const form = calculator.find('form');
-    expect(form.length).toBe(1);
-    expect(form.find('input').length).toBe(2);
-    expect(form.find('button').length).toBe(1);
+    const form = screen.getByRole('form');
+    expect(form).toBeInTheDocument();
+    expect(screen.getAllByRole('spinbutton').length).toBe(2);
+    expect(screen.getByRole('button', { name: /add/i })).toBeInTheDocument();
   });
 
   it('should display the result on add', () => {
-    const calculator = mount(<Calculator />);
+    render(<Calculator />);
 
-    const form = calculator.find('form');
+    const input1 = screen.getAllByRole('spinbutton')[0];
+    const input2 = screen.getAllByRole('spinbutton')[1];
+    const button = screen.getByRole('button', { name: /add/i });
 
-    form.childAt(0).instance().value = 3;
-    form.childAt(1).instance().value = 5;
-    form.find('button').simulate('click');
+    fireEvent.change(input1, { target: { value: 3 } });
+    fireEvent.change(input2, { target: { value: 5 } });
+    fireEvent.click(button);
 
-    const result = calculator.find('.result');
-    expect(result.text()).toEqual('8');
+    const result = screen.getByText('8');
+    expect(result).toBeInTheDocument();
   });
 });
