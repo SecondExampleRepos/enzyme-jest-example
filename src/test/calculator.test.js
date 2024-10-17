@@ -19,6 +19,7 @@ describe('Calculator component', () => {
   it('should render required form elements', () => {
     render(<Calculator />);
 
+    // SECOND: Please add a role="form" attribute to this element in the React component so that it can be selected.
     const form = screen.getByRole('form');
     expect(form).toBeInTheDocument();
     expect(screen.getAllByRole('textbox').length).toBe(2);
